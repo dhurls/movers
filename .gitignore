@@ -1,0 +1,12 @@
+.env
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+data/ticker_cache.db
+data/tickers.json
+# skip_tickers.json is intentionally committed — it accumulates across runs
