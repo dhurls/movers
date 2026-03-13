@@ -1,13 +1,14 @@
 import argparse
 import sys
 
-from src.config import MIN_ADV_NOTIONAL, MIN_MARKET_CAP, DEFAULT_TOP_N, DEFAULT_CANDIDATES
+from src.config import MIN_ADV_NOTIONAL, MIN_MARKET_CAP, DEFAULT_TOP_N, DEFAULT_CANDIDATES, SLACK_WEBHOOK_URL
 from src.display import console, display_movers
 from src.export import export_markdown
 from src.filters import apply_liquidity_filters
 from src.logger import get_logger, setup_logging
 from src.movers import get_movers
 from src.news import get_best_news
+from src.slack import post_movers_to_slack
 from src.summarizer import summarize_catalyst
 from src.universe import load_universe
 
@@ -33,6 +34,7 @@ def build_parser() -> argparse.ArgumentParser:
                    help="Filter by GICS sector (e.g. 'Technology', 'Energy', 'Healthcare')")
     p.add_argument("--no-ai", action="store_true", help="Skip AI summarization, show raw headlines")
     p.add_argument("--export", metavar="FILE", help="Export report to markdown file")
+    p.add_argument("--slack", action="store_true", help="Post results to Slack via webhook")
     p.add_argument("--refresh", action="store_true", help="Force refresh of ticker universe")
     p.add_argument("--verbose", action="store_true", help="Enable debug logging")
     return p
@@ -107,6 +109,19 @@ def run(args: argparse.Namespace) -> None:
     if args.export:
         export_markdown(movers, args.export)
         log.debug("Report exported to %s", args.export)
+
+    # 9. Optional Slack post
+    if args.slack:
+        webhook = SLACK_WEBHOOK_URL
+        if not webhook:
+            console.print("[red]SLACK_WEBHOOK_URL not set in .env — skipping Slack post.[/red]")
+        else:
+            try:
+                post_movers_to_slack(movers, webhook)
+                console.print("[green]Posted to Slack #dhurley[/green]")
+            except Exception as e:
+                log.error("Slack post failed: %s", e)
+                console.print(f"[red]Slack post failed: {e}[/red]")
 
 
 def main() -> None:

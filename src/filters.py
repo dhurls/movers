@@ -11,7 +11,7 @@ from src.retry import with_retry
 log = get_logger(__name__)
 
 
-@with_retry(max_attempts=3, base_delay=1.0, exceptions=(Exception,))
+@with_retry(max_attempts=4, base_delay=30.0, exceptions=(Exception,))
 def _fetch_info(ticker: str) -> dict:
     return yf.Ticker(ticker).info
 
@@ -94,7 +94,7 @@ def apply_liquidity_filters(
         row["sector"] = meta.get("sector") or ""
         filtered.append(row)
 
-        time.sleep(0.1)
+        time.sleep(2.0)
 
     result = pd.DataFrame(filtered).reset_index(drop=True)
     print(f"  {len(result)}/{total} passed filters")

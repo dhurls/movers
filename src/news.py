@@ -1,5 +1,5 @@
 import time
-from datetime import date
+from datetime import date, timedelta
 
 import requests
 
@@ -20,10 +20,11 @@ def _get(url: str, params: dict) -> requests.Response:
 def fetch_finnhub_news(ticker: str, api_key: str = FINNHUB_API_KEY) -> list[dict]:
     """Fetch today's news for a ticker from Finnhub."""
     today = date.today().isoformat()
+    yesterday = (date.today() - timedelta(days=1)).isoformat()
     try:
         resp = _get(
             f"{FINNHUB_BASE_URL}/company-news",
-            {"symbol": ticker, "from": today, "to": today, "token": api_key},
+            {"symbol": ticker, "from": yesterday, "to": today, "token": api_key},
         )
         articles = resp.json()
         if not isinstance(articles, list):
@@ -88,7 +89,7 @@ def get_best_news(
     ticker: str,
     finnhub_key: str = FINNHUB_API_KEY,
     marketaux_key: str = MARKETAUX_API_KEY,
-    delay: float = 0.5,
+    delay: float = 1.5,
 ) -> dict:
     """Return the best available news for a ticker.
 

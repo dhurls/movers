@@ -8,6 +8,7 @@ FINNHUB_API_KEY = os.getenv("FINNHUB_API_KEY", "")
 MARKETAUX_API_KEY = os.getenv("MARKETAUX_API_KEY", "")
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 FMP_API_KEY = os.getenv("FMP_API_KEY", "")
+SLACK_WEBHOOK_URL = os.getenv("SLACK_WEBHOOK_URL", "")
 
 # Liquidity filter thresholds
 MIN_MARKET_CAP = 2_000_000_000       # $2B
