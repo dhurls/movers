@@ -118,7 +118,7 @@ def run(args: argparse.Namespace) -> None:
         else:
             try:
                 post_movers_to_slack(movers, webhook)
-                console.print("[green]Posted to Slack #dhurley[/green]")
+                console.print("[green]Posted to Slack.[/green]")
             except Exception as e:
                 log.error("Slack post failed: %s", e)
                 console.print(f"[red]Slack post failed: {e}[/red]")
